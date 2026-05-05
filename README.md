@@ -2,6 +2,8 @@
 
 An animated SVG hourglass loading spinner for React.
 
+[![Storybook](https://img.shields.io/badge/Storybook-Playground-ff4785?logo=storybook)](https://olegthecoder.github.io/hourglass-loader)
+
 ```bash
 npm install @olegthecoder/hourglass-loader
 ```
@@ -12,6 +14,14 @@ npm install @olegthecoder/hourglass-loader
 
 A classic hourglass with flowing sand animation that flips endlessly.
 
+<img src="https://raw.githubusercontent.com/olegTheCoder/hourglass-loader/main/docs/hourglass-loader.gif" alt="Hourglass Loader" style="max-width: 300px;">
+
+```tsx
+import { HourglassLoader } from '@olegthecoder/hourglass-loader';
+
+<HourglassLoader />
+```
+
 ### Props
 
 | Prop | Type | Default | Description |
@@ -21,14 +31,6 @@ A classic hourglass with flowing sand animation that flips endlessly.
 | `glassColor` | `string` | `'#9BA4B5'` | Color of the glass bulb outline |
 | `frameColor` | `string` | `'#2B2D42'` | Color of the hourglass frame |
 | `speed` | `number` | `1` | Animation speed multiplier |
-
-### Usage
-
-```tsx
-import { HourglassLoader } from '@olegthecoder/hourglass-loader';
-
-<HourglassLoader />
-```
 
 ### Options
 
