@@ -11,24 +11,14 @@ const html = `<!DOCTYPE html>
 <html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="280" height="280">
   <defs>
-    <style>
-      @keyframes hg-f { 0%,80%{transform:rotate(0deg)} 92%,100%{transform:rotate(180deg)} }
-      @keyframes hg-t { 0%,10%{transform:scaleY(1)} 80%,100%{transform:scaleY(0)} }
-      @keyframes hg-b { 0%,10%{transform:scaleY(0)} 80%,100%{transform:scaleY(1)} }
-      @keyframes hg-s { 0%,10%{stroke-dashoffset:28} 15%,75%{stroke-dashoffset:0} 80%,100%{stroke-dashoffset:-28} }
-      .g { transform-origin:50px 50px; animation:hg-f ${dur}s cubic-bezier(0.45,0,0.55,1) infinite }
-      .t { transform-origin:50px 50px; animation:hg-t ${dur}s linear infinite }
-      .b { transform-origin:50px 80px; animation:hg-b ${dur}s linear infinite }
-      .s { stroke-dasharray:28; stroke-dashoffset:28; animation:hg-s ${dur}s linear infinite }
-    </style>
     <clipPath id="c"><path d="M 32 20 C 32 45,46 48,50 50 C 54 48,68 45,68 20 Z M 32 80 C 32 55,46 52,50 50 C 54 52,68 55,68 80 Z"/></clipPath>
   </defs>
-  <g class="g">
+  <g id="g">
     <g clip-path="url(#c)">
-      <rect class="t" x="25" y="20" width="50" height="30" fill="#FF8C42"/>
-      <rect class="b" x="25" y="50" width="50" height="30" fill="#FF8C42"/>
+      <rect id="t" x="25" y="20" width="50" height="30" fill="#FF8C42"/>
+      <rect id="b" x="25" y="50" width="50" height="30" fill="#FF8C42"/>
     </g>
-    <line class="s" x1="50" y1="50" x2="50" y2="78" stroke="#FF8C42" stroke-width="2.5"/>
+    <line id="s" x1="50" y1="50" x2="50" y2="78" stroke="#FF8C42" stroke-width="2.5"/>
     <path d="M 32 20 C 32 45,46 48,50 50 C 54 48,68 45,68 20 M 32 80 C 32 55,46 52,50 50 C 54 52,68 55,68 80" fill="none" stroke="#9BA4B5" stroke-width="3" stroke-linecap="round"/>
     <line x1="22" y1="20" x2="22" y2="80" stroke="#2B2D42" stroke-width="5" stroke-linecap="round"/>
     <line x1="78" y1="20" x2="78" y2="80" stroke="#2B2D42" stroke-width="5" stroke-linecap="round"/>
@@ -46,18 +36,67 @@ const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 300, height: 300 } });
 await page.goto('file:///tmp/hourglass.html');
 
-await page.evaluate(() => {
-  const g = document.querySelector('.g');
-  g.style.animationPlayState = 'paused';
-  window.__g = g;
-});
+await page.evaluate((d) => {
+  const dur = d;
+
+  const gKFs = [
+    { transform: 'rotate(0deg)', offset: 0 },
+    { transform: 'rotate(0deg)', offset: 0.8 },
+    { transform: 'rotate(180deg)', offset: 0.92 },
+    { transform: 'rotate(180deg)', offset: 1 },
+  ];
+  const gOpts = {
+    duration: dur * 1000,
+    iterations: Infinity,
+    easing: 'cubic-bezier(0.45, 0, 0.55, 1)',
+  };
+
+  const tKFs = [
+    { transform: 'scaleY(1)', offset: 0 },
+    { transform: 'scaleY(1)', offset: 0.1 },
+    { transform: 'scaleY(0)', offset: 0.8 },
+    { transform: 'scaleY(0)', offset: 1 },
+  ];
+  const tbOpts = {
+    duration: dur * 1000,
+    iterations: Infinity,
+    easing: 'linear',
+  };
+
+  const sKFs = [
+    { strokeDashoffset: '28', offset: 0 },
+    { strokeDashoffset: '28', offset: 0.1 },
+    { strokeDashoffset: '0', offset: 0.15 },
+    { strokeDashoffset: '0', offset: 0.75 },
+    { strokeDashoffset: '-28', offset: 0.8 },
+    { strokeDashoffset: '-28', offset: 1 },
+  ];
+
+  const g = document.getElementById('g');
+  const t = document.getElementById('t');
+  const b = document.getElementById('b');
+  const s = document.getElementById('s');
+
+  const a1 = g.animate(gKFs, gOpts);
+  g.style.transformOrigin = '50px 50px';
+  const a2 = t.animate(tKFs, tbOpts);
+  t.style.transformOrigin = '50px 50px';
+  const a3 = b.animate(tKFs, tbOpts);
+  b.style.transformOrigin = '50px 80px';
+  const a4 = s.animate(sKFs, tbOpts);
+  s.style.strokeDasharray = '28';
+
+  window.__anims = [a1, a2, a3, a4];
+}, dur);
 
 for (let i = 0; i < totalFrames; i++) {
-  const delay = -((i / totalFrames) * dur);
-  await page.evaluate((d) => {
-    window.__g.style.animationDelay = `${d}s`;
-  }, delay);
-  await new Promise(r => setTimeout(r, 30));
+  const time = (i / totalFrames) * dur * 1000;
+  await page.evaluate((t) => {
+    window.__anims.forEach(a => {
+      a.pause();
+      a.currentTime = t;
+    });
+  }, time);
   await page.screenshot({ path: `${dir}/frame${String(i).padStart(3, '0')}.png`, omitBackground: true });
 }
 
