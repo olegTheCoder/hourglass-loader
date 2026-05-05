@@ -1,0 +1,68 @@
+{
+  "name": "@olegthecoder/hourglass-loader",
+  "version": "1.0.0",
+  "description": "An animated SVG hourglass loading spinner for React",
+  "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "prepublishOnly": "npm run build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "keywords": [
+    "react",
+    "loader",
+    "spinner",
+    "loading",
+    "svg",
+    "animation",
+    "hourglass",
+    "sand"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olegTheCoder/hourglass-loader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/olegTheCoder/hourglass-loader/issues"
+  },
+  "homepage": "https://olegthecoder.github.io/hourglass-loader",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^5.1.2",
+    "@storybook/addon-a11y": "^10.3.5",
+    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/addon-onboarding": "^10.3.5",
+    "@storybook/react-vite": "^10.3.5",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "storybook": "^10.3.5",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.2",
+    "vite-plugin-dts": "^4.5.4"
+  }
+}
